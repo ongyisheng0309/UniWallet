@@ -15,12 +15,16 @@ import {
   Copy,
   CreditCard,
   TrendingUp,
+  Send,
+  QrCode,
 } from "lucide-react"
 import FiatWallet from "./fiat-wallet"
 import AddCryptoPage from "./add-crypto-page"
 import BuySellCrypto from "./buy-sell-crypto"
 import CryptoPayPage from "./crypto-pay-page"
 import StakingPage from "./staking-page"
+import CryptoReceivePage from "./crypto-receive-page"
+import CryptoSendPage from "./crypto-send-page"
 
 export default function Component() {
   const [selectedTimeframe, setSelectedTimeframe] = useState("1d")
@@ -31,6 +35,9 @@ export default function Component() {
   const [showBuySell, setShowBuySell] = useState(false)
   const [showCryptoPay, setShowCryptoPay] = useState(false)
   const [showStaking, setShowStaking] = useState(false)
+  const [showMoreMenu, setShowMoreMenu] = useState(false)
+  const [showReceive, setShowReceive] = useState(false)
+  const [showSend, setShowSend] = useState(false)
 
   const timeframes = ["1d", "1w", "1m", "6m", "1y", "All"]
   const categories = [
@@ -117,6 +124,14 @@ export default function Component() {
     return <StakingPage onBack={() => setShowStaking(false)} />
   }
 
+  if (showReceive) {
+    return <CryptoReceivePage onBack={() => setShowReceive(false)} cryptoData={cryptoData} />
+  }
+
+  if (showSend) {
+    return <CryptoSendPage onBack={() => setShowSend(false)} cryptoData={cryptoData} />
+  }
+
   return (
     <div>
       {/* Header - Crypto Wallet */}
@@ -193,10 +208,42 @@ export default function Component() {
             <BarChart3 className="w-6 h-6" />
             <span className="text-xs font-medium">Stake</span>
           </Button>
-          <Button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105">
-            <MoreHorizontal className="w-6 h-6" />
-            <span className="text-xs font-medium">More</span>
-          </Button>
+          <div className="relative">
+            <Button
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105"
+              onClick={() => setShowMoreMenu(!showMoreMenu)}
+            >
+              <MoreHorizontal className="w-6 h-6" />
+              <span className="text-xs font-medium">More</span>
+            </Button>
+
+            {showMoreMenu && (
+              <div className="absolute bottom-full mb-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-2 min-w-[160px] z-50 animate-fade-in-up">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start p-3 hover:bg-blue-50 rounded-xl"
+                  onClick={() => {
+                    setShowMoreMenu(false)
+                    setShowReceive(true)
+                  }}
+                >
+                  <QrCode className="w-4 h-4 mr-3 text-blue-600" />
+                  <span className="text-gray-700">Receive</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start p-3 hover:bg-green-50 rounded-xl"
+                  onClick={() => {
+                    setShowMoreMenu(false)
+                    setShowSend(true)
+                  }}
+                >
+                  <Send className="w-4 h-4 mr-3 text-green-600" />
+                  <span className="text-gray-700">Send</span>
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
