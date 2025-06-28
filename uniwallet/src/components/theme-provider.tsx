@@ -1,8 +1,7 @@
 "use client"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
-import type { ComponentPropsWithoutRef } from "react"
+import type { ThemeProviderProps } from "next-themes"
 
-export function ThemeProvider(props: ComponentPropsWithoutRef<typeof NextThemesProvider>) {
-  const { children, ...rest } = props
-  return <NextThemesProvider {...rest}>{children}</NextThemesProvider>
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
 }

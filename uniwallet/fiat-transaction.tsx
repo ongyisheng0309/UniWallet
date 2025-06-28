@@ -63,7 +63,7 @@ export default function FiatTransactions({ type, onBack }: FiatTransactionsProps
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-rose-100">
+    <div>
       {/* Header */}
       <div className="bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 text-white p-6 mx-4 mt-4 rounded-3xl shadow-2xl">
         <div className="flex items-center gap-3 mb-4">

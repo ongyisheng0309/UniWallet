@@ -9,9 +9,10 @@ import { ArrowLeft, Search, TrendingUp, Plus } from "lucide-react"
 
 interface AddCryptoPageProps {
   onBack: () => void
+  onAddCrypto: (crypto: any) => void
 }
 
-export default function AddCryptoPage({ onBack }: AddCryptoPageProps) {
+export default function AddCryptoPage({ onBack, onAddCrypto }: AddCryptoPageProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
 
@@ -130,7 +131,7 @@ export default function AddCryptoPage({ onBack }: AddCryptoPageProps) {
     .slice(0, 3)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div>
       {/* Header */}
       <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white p-6 mx-4 mt-4 rounded-3xl shadow-2xl">
         <div className="flex items-center gap-3 mb-6">
@@ -248,7 +249,11 @@ export default function AddCryptoPage({ onBack }: AddCryptoPageProps) {
                       </p>
                     </div>
 
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-3">
+                    <Button
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-3"
+                      onClick={() => onAddCrypto(crypto)}
+                    >
                       <Plus className="w-4 h-4 mr-1" />
                       Add
                     </Button>

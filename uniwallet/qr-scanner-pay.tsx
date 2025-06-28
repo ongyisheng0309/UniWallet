@@ -6,18 +6,31 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft, Camera, QrCode, Flashlight, RotateCcw, CheckCircle, AlertCircle } from "lucide-react"
+import PaymentSuccessModal from "./payment-success-modal"
 
 interface QRScannerPayProps {
   onBack: () => void
+  onSuccess?: () => void
+  cryptoAmount?: string
+  cryptoSymbol?: string
+  fiatAmount?: string
 }
 
-export default function QRScannerPay({ onBack }: QRScannerPayProps) {
+export default function QRScannerPay({
+  onBack,
+  onSuccess,
+  cryptoAmount,
+  cryptoSymbol,
+  fiatAmount: initialFiatAmount,
+}: QRScannerPayProps) {
   const [isScanning, setIsScanning] = useState(true)
   const [scannedData, setScannedData] = useState<any>(null)
-  const [amount, setAmount] = useState("")
+  const [amount, setAmount] = useState(initialFiatAmount || "")
   const [note, setNote] = useState("")
   const [flashOn, setFlashOn] = useState(false)
   const [scanningAnimation, setScanningAnimation] = useState(0)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [transactionId, setTransactionId] = useState("")
 
   // Mock QR data for different merchants
   const mockQRData = [
@@ -72,35 +85,63 @@ export default function QRScannerPay({ onBack }: QRScannerPayProps) {
   const handleRescan = () => {
     setIsScanning(true)
     setScannedData(null)
-    setAmount("")
+    if (!initialFiatAmount) {
+      setAmount("")
+    }
     setNote("")
   }
 
   const handlePayment = () => {
-    // Mock payment processing
-    alert(`Payment of RM ${amount} to ${scannedData.merchantName} successful!`)
-    onBack()
+    // Generate mock transaction ID
+    const txId = `TXN${Date.now().toString().slice(-8)}`
+    setTransactionId(txId)
+    setShowSuccessModal(true)
+  }
+
+  const handleSuccessClose = () => {
+    setShowSuccessModal(false)
+    if (onSuccess) {
+      onSuccess()
+    } else {
+      onBack()
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-50 to-rose-100">
+    <div>
       {/* Header */}
-      <div className="bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 text-white p-6 mx-4 mt-4 rounded-3xl shadow-2xl">
-        <div className="flex items-center gap-3 mb-4">
+      <div className="bg-gradient-to-br from-pink-500 via-rose-500 to-pink-600 text-white p-8 mx-6 mt-6 rounded-3xl shadow-2xl">
+        <div className="flex items-center gap-4 mb-4">
           <Button variant="ghost" size="sm" onClick={onBack} className="text-white hover:bg-white/20 p-2 rounded-full">
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-5 h-5" />
           </Button>
-          <div className="flex items-center gap-2">
-            <QrCode className="w-5 h-5" />
+          <div className="flex items-center gap-3">
+            <QrCode className="w-6 h-6" />
             <div>
-              <h1 className="text-xl font-bold">DuitNow QR Pay</h1>
-              <p className="text-sm text-pink-200">Scan to pay instantly</p>
+              <h1 className="text-2xl font-bold">DuitNow QR Pay</h1>
+              <p className="text-sm text-pink-200">
+                {cryptoSymbol ? `Pay with ${cryptoSymbol} via DuitNow` : "Scan to pay instantly"}
+              </p>
             </div>
           </div>
         </div>
+
+        {/* Crypto Conversion Info */}
+        {cryptoAmount && cryptoSymbol && (
+          <Card className="bg-white/10 border-white/20">
+            <CardContent className="p-4">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-pink-200">Converting:</span>
+                <span className="font-semibold">
+                  {cryptoAmount} {cryptoSymbol} → RM {initialFiatAmount}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
-      <div className="p-4">
+      <div className="p-6">
         {isScanning ? (
           /* QR Scanner Interface */
           <Card className="border-0 shadow-lg">
@@ -171,7 +212,7 @@ export default function QRScannerPay({ onBack }: QRScannerPayProps) {
           </Card>
         ) : (
           /* Payment Details */
-          <div className="space-y-4">
+          <div className="space-y-6">
             {/* Merchant Info Card */}
             <Card className="border-0 shadow-lg bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
               <CardContent className="p-6">
@@ -226,28 +267,35 @@ export default function QRScannerPay({ onBack }: QRScannerPayProps) {
                     onChange={(e) => setAmount(e.target.value)}
                     className="mt-2 text-lg"
                     required
+                    disabled={!!initialFiatAmount}
                   />
-                  <p className="text-sm text-gray-500 mt-1">Available balance: RM 12,847.50</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {cryptoSymbol
+                      ? `Converting from ${cryptoAmount} ${cryptoSymbol}`
+                      : "Available balance: RM 12,847.50"}
+                  </p>
                 </div>
 
-                {/* Quick Amount Buttons */}
-                <div>
-                  <Label className="text-sm font-medium text-gray-700 mb-3 block">Quick Amounts</Label>
-                  <div className="grid grid-cols-4 gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setAmount("10")}>
-                      RM 10
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => setAmount("20")}>
-                      RM 20
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => setAmount("50")}>
-                      RM 50
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => setAmount("100")}>
-                      RM 100
-                    </Button>
+                {/* Quick Amount Buttons - Only show if not from crypto pay */}
+                {!initialFiatAmount && (
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700 mb-3 block">Quick Amounts</Label>
+                    <div className="grid grid-cols-4 gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setAmount("10")}>
+                        RM 10
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setAmount("20")}>
+                        RM 20
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setAmount("50")}>
+                        RM 50
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => setAmount("100")}>
+                        RM 100
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Note */}
                 <div>
@@ -269,6 +317,14 @@ export default function QRScannerPay({ onBack }: QRScannerPayProps) {
                     <CardContent className="p-4">
                       <h3 className="font-semibold text-pink-800 mb-2">Payment Summary</h3>
                       <div className="space-y-2 text-sm">
+                        {cryptoSymbol && (
+                          <div className="flex justify-between">
+                            <span>Converting:</span>
+                            <span>
+                              {cryptoAmount} {cryptoSymbol}
+                            </span>
+                          </div>
+                        )}
                         <div className="flex justify-between">
                           <span>Amount:</span>
                           <span>RM {amount}</span>
@@ -312,6 +368,7 @@ export default function QRScannerPay({ onBack }: QRScannerPayProps) {
                     <h4 className="font-semibold text-blue-800 text-sm">Secure Payment</h4>
                     <p className="text-xs text-blue-600 mt-1">
                       This payment is secured by DuitNow. Always verify merchant details before proceeding.
+                      {cryptoSymbol && " Your crypto will be converted at current market rates."}
                     </p>
                   </div>
                 </div>
@@ -320,6 +377,15 @@ export default function QRScannerPay({ onBack }: QRScannerPayProps) {
           </div>
         )}
       </div>
+
+      {/* Success Modal */}
+      <PaymentSuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleSuccessClose}
+        amount={`RM ${amount}`}
+        merchant={scannedData?.merchantName || ""}
+        transactionId={transactionId}
+      />
     </div>
   )
 }

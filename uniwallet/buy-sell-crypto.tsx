@@ -27,7 +27,7 @@ export default function BuySellCrypto({ onBack }: BuySellCryptoProps) {
   const selectedCryptoData = cryptoOptions.find((crypto) => crypto.symbol === selectedCrypto)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div>
       {/* Header */}
       <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white p-6 mx-4 mt-4 rounded-3xl shadow-2xl">
         <div className="flex items-center gap-3 mb-4">
@@ -194,7 +194,7 @@ export default function BuySellCrypto({ onBack }: BuySellCryptoProps) {
                           </div>
                           <div className="text-right">
                             <p className="font-semibold">RM 10,623.45</p>
-                            <Button size="sm" variant="outline" className="mt-1">
+                            <Button size="sm" variant="outline" className="mt-1 bg-transparent">
                               Sell
                             </Button>
                           </div>
@@ -216,7 +216,7 @@ export default function BuySellCrypto({ onBack }: BuySellCryptoProps) {
                           </div>
                           <div className="text-right">
                             <p className="font-semibold">RM 12,975.23</p>
-                            <Button size="sm" variant="outline" className="mt-1">
+                            <Button size="sm" variant="outline" className="mt-1 bg-transparent">
                               Sell
                             </Button>
                           </div>

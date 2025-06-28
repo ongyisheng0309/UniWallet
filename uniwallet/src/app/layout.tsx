@@ -7,8 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Crypto Wallet App",
-  description: "A modern cryptocurrency and fiat wallet application",
+  title: "UniWallet - Universal Crypto & Fiat Wallet",
+  description: "Your all-in-one digital wallet for cryptocurrency and fiat currency management",
 }
 
 export default function RootLayout({
