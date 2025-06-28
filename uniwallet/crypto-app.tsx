@@ -85,7 +85,6 @@ export default function Component() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-      <div className="test-class">Test</div>
       {/* Header - Crypto Wallet */}
       <div className="bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white p-6 mx-4 mt-4 rounded-3xl shadow-2xl">
         <div className="flex items-center justify-between mb-4">
