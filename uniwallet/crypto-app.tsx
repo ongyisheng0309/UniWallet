@@ -208,14 +208,12 @@ export default function Component() {
             <BarChart3 className="w-6 h-6" />
             <span className="text-xs font-medium">Stake</span>
           </Button>
-          <div className="relative">
-            <Button
-              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105"
-              onClick={() => setShowMoreMenu(!showMoreMenu)}
-            >
-              <MoreHorizontal className="w-6 h-6" />
-              <span className="text-xs font-medium">More</span>
-            </Button>
+          <Button
+            className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105 relative"
+            onClick={() => setShowMoreMenu(!showMoreMenu)}
+          >
+            <MoreHorizontal className="w-6 h-6" />
+            <span className="text-xs font-medium">More</span>
 
             {showMoreMenu && (
               <div className="absolute bottom-full mb-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-2 min-w-[160px] z-50 animate-fade-in-up">
@@ -243,7 +241,7 @@ export default function Component() {
                 </Button>
               </div>
             )}
-          </div>
+          </Button>
         </div>
       </div>
 
