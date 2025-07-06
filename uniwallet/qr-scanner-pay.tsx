@@ -383,7 +383,6 @@ export default function QRScannerPay({
         isOpen={showSuccessModal}
         onClose={handleSuccessClose}
         amount={`RM ${amount}`}
-        merchant={scannedData?.merchantName || ""}
         transactionId={transactionId}
       />
     </div>

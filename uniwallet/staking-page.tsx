@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, BarChart3, Clock, Lock, AlertCircle } from "lucide-react"
+import PaymentSuccessModal from "./payment-success-modal"
 
 interface StakingPageProps {
   onBack: () => void
@@ -16,6 +17,9 @@ export default function StakingPage({ onBack }: StakingPageProps) {
   const [selectedCrypto, setSelectedCrypto] = useState("ETH")
   const [stakeAmount, setStakeAmount] = useState("")
   const [selectedPeriod, setSelectedPeriod] = useState("30")
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [successData, setSuccessData] = useState<any>(null)
 
   const stakingOptions = [
     {
@@ -319,6 +323,23 @@ export default function StakingPage({ onBack }: StakingPageProps) {
                 <Button
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
                   disabled={!stakeAmount || Number.parseFloat(stakeAmount) <= 0}
+                  onClick={() => {
+                    const unlockDate = new Date()
+                    unlockDate.setDate(unlockDate.getDate() + Number.parseInt(selectedPeriod))
+
+                    const txId = `STAKE${Date.now().toString().slice(-8)}`
+
+                    setSuccessData({
+                      crypto: selectedCrypto,
+                      amount: stakeAmount,
+                      apy: selectedPeriodData?.apy,
+                      period: selectedPeriod,
+                      expectedRewards: calculateRewards(),
+                      unlockDate: unlockDate.toLocaleDateString(),
+                      txId,
+                    })
+                    setShowSuccessModal(true)
+                  }}
                 >
                   <Lock className="w-5 h-5 mr-2" />
                   Start Staking
@@ -328,6 +349,29 @@ export default function StakingPage({ onBack }: StakingPageProps) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Success Modal */}
+      {showSuccessModal && successData && (
+        <PaymentSuccessModal
+          isOpen={showSuccessModal}
+          onClose={() => {
+            setShowSuccessModal(false)
+            onBack()
+          }}
+          title="Staking Started!"
+          subtitle={`Your ${successData.crypto} has been successfully staked`}
+          amount={`${successData.amount} ${successData.crypto}`}
+          recipient="Staking Pool"
+          transactionId={successData.txId}
+          transactionType="Crypto Staking"
+          additionalDetails={[
+            { label: "APY", value: successData.apy },
+            { label: "Period", value: `${successData.period} days` },
+            { label: "Expected Rewards", value: `${successData.expectedRewards} ${successData.crypto}` },
+            { label: "Unlock Date", value: successData.unlockDate },
+          ]}
+        />
+      )}
     </div>
   )
 }

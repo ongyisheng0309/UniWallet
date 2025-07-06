@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, TrendingUp, TrendingDown, Wallet, CreditCard } from "lucide-react"
+import PaymentSuccessModal from "./payment-success-modal"
 
 interface BuySellCryptoProps {
   onBack: () => void
@@ -16,6 +17,8 @@ export default function BuySellCrypto({ onBack }: BuySellCryptoProps) {
   const [selectedCrypto, setSelectedCrypto] = useState("BTC")
   const [amount, setAmount] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("wallet")
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [successData, setSuccessData] = useState<any>(null)
 
   const cryptoOptions = [
     { symbol: "BTC", name: "Bitcoin", price: "RM 453,988", icon: "₿", color: "bg-orange-500" },
@@ -163,7 +166,26 @@ export default function BuySellCrypto({ onBack }: BuySellCryptoProps) {
                   </Card>
                 )}
 
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-lg font-semibold">
+                <Button
+                  className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-lg font-semibold"
+                  onClick={() => {
+                    const cryptoAmount = (
+                      Number.parseFloat(amount) / Number.parseFloat(selectedCryptoData.price.replace(/[RM,]/g, ""))
+                    ).toFixed(6)
+                    const fee = (Number.parseFloat(amount) * 0.015).toFixed(2)
+                    const txId = `BUY${Date.now().toString().slice(-8)}`
+
+                    setSuccessData({
+                      type: "buy",
+                      crypto: selectedCrypto,
+                      cryptoAmount,
+                      amount,
+                      fee,
+                      txId,
+                    })
+                    setShowSuccessModal(true)
+                  }}
+                >
                   Buy {selectedCrypto}
                 </Button>
               </CardContent>
@@ -216,7 +238,25 @@ export default function BuySellCrypto({ onBack }: BuySellCryptoProps) {
                           </div>
                           <div className="text-right">
                             <p className="font-semibold">RM 12,975.23</p>
-                            <Button size="sm" variant="outline" className="mt-1 bg-transparent">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="mt-1 bg-transparent"
+                              onClick={() => {
+                                const fee = (12975.23 * 0.015).toFixed(2)
+                                const txId = `SELL${Date.now().toString().slice(-8)}`
+
+                                setSuccessData({
+                                  type: "sell",
+                                  crypto: "ETH",
+                                  cryptoAmount: "1.2567",
+                                  amount: "12975.23",
+                                  fee,
+                                  txId,
+                                })
+                                setShowSuccessModal(true)
+                              }}
+                            >
                               Sell
                             </Button>
                           </div>
@@ -249,6 +289,26 @@ export default function BuySellCrypto({ onBack }: BuySellCryptoProps) {
           </TabsContent>
         </Tabs>
       </div>
+      {/* Success Modal */}
+      {showSuccessModal && successData && (
+        <PaymentSuccessModal
+          isOpen={showSuccessModal}
+          onClose={() => {
+            setShowSuccessModal(false)
+            onBack()
+          }}
+          title={successData.type === "buy" ? "Purchase Successful!" : "Sale Successful!"}
+          subtitle={`Your ${successData.type === "buy" ? "purchase" : "sale"} has been completed successfully`}
+          amount={`${successData.cryptoAmount} ${successData.crypto}`}
+          recipient={successData.type === "buy" ? "Your Wallet" : "Fiat Wallet"}
+          transactionId={successData.txId}
+          transactionType={successData.type === "buy" ? "Crypto Purchase" : "Crypto Sale"}
+          additionalDetails={[
+            { label: "Amount", value: `RM ${successData.amount}` },
+            { label: "Fee", value: `RM ${successData.fee}` },
+          ]}
+        />
+      )}
     </div>
   )
 }

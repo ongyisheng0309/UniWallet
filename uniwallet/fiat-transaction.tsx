@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Send, QrCode, Plus, User, Building, CreditCard, Smartphone, Camera } from "lucide-react"
+import PaymentSuccessModal from "./payment-success-modal"
 
 interface FiatTransactionsProps {
   type: "send" | "receive" | "topup" | "pay"
@@ -18,6 +19,8 @@ export default function FiatTransactions({ type, onBack }: FiatTransactionsProps
   const [recipient, setRecipient] = useState("")
   const [note, setNote] = useState("")
   const [topupMethod, setTopupMethod] = useState("card")
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [successData, setSuccessData] = useState<any>(null)
 
   const getTitle = () => {
     switch (type) {
@@ -174,7 +177,20 @@ export default function FiatTransactions({ type, onBack }: FiatTransactionsProps
                 </Card>
               )}
 
-              <Button className="w-full bg-red-600 hover:bg-red-700 text-white py-3 text-lg font-semibold">
+              <Button
+                className="w-full bg-red-600 hover:bg-red-700 text-white py-3 text-lg font-semibold"
+                onClick={() => {
+                  const refId = `TXN${Date.now().toString().slice(-8)}`
+
+                  setSuccessData({
+                    amount,
+                    recipient: recipient || "Selected Contact",
+                    note,
+                    refId,
+                  })
+                  setShowSuccessModal(true)
+                }}
+              >
                 Send Money
               </Button>
             </CardContent>
@@ -336,13 +352,49 @@ export default function FiatTransactions({ type, onBack }: FiatTransactionsProps
                 </Card>
               )}
 
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold">
+              <Button
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
+                onClick={() => {
+                  const refId = `TOP${Date.now().toString().slice(-8)}`
+
+                  setSuccessData({
+                    amount,
+                    recipient: "Your Wallet",
+                    note: "Wallet Top-up",
+                    refId,
+                  })
+                  setShowSuccessModal(true)
+                }}
+              >
                 Top Up Now
               </Button>
             </CardContent>
           </Card>
         )}
       </div>
+      {/* Success Modal */}
+      {showSuccessModal && successData && (
+        <PaymentSuccessModal
+          isOpen={showSuccessModal}
+          onClose={() => {
+            setShowSuccessModal(false)
+            onBack()
+          }}
+          title={
+            type === "send"
+              ? "Money Sent Successfully!"
+              : type === "topup"
+                ? "Top Up Successful!"
+                : "Transaction Successful!"
+          }
+          subtitle={`Your ${type === "send" ? "transfer" : type === "topup" ? "top up" : "transaction"} has been completed successfully`}
+          amount={`RM ${successData.amount}`}
+          recipient={successData.recipient}
+          transactionId={successData.refId}
+          transactionType={type === "send" ? "Money Transfer" : type === "topup" ? "Wallet Top Up" : "Transaction"}
+          additionalDetails={successData.note ? [{ label: "Note", value: `"${successData.note}"` }] : []}
+        />
+      )}
     </div>
   )
 }

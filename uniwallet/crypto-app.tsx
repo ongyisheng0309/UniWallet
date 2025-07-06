@@ -186,62 +186,63 @@ export default function Component() {
         </div>
 
         {/* Action Buttons - Merged Buy/Sell into Trade */}
-        <div className="grid grid-cols-4 gap-4 animate-fade-in-up delay-700">
-          <Button
-            className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105 animate-glow"
-            onClick={() => setShowBuySell(true)}
-          >
-            <TrendingUp className="w-6 h-6" />
-            <span className="text-xs font-medium">Trade</span>
-          </Button>
-          <Button
-            className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105"
-            onClick={() => setShowCryptoPay(true)}
-          >
-            <CreditCard className="w-6 h-6" />
-            <span className="text-xs font-medium">Pay</span>
-          </Button>
-          <Button
-            className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105"
-            onClick={() => setShowStaking(true)}
-          >
-            <BarChart3 className="w-6 h-6" />
-            <span className="text-xs font-medium">Stake</span>
-          </Button>
-          <Button
-            className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105 relative"
-            onClick={() => setShowMoreMenu(!showMoreMenu)}
-          >
-            <MoreHorizontal className="w-6 h-6" />
-            <span className="text-xs font-medium">More</span>
+        <div className="animate-fade-in-up delay-700">
+          <div className="grid grid-cols-4 gap-4">
+            <Button
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105 animate-glow"
+              onClick={() => setShowBuySell(true)}
+            >
+              <TrendingUp className="w-6 h-6" />
+              <span className="text-xs font-medium">Trade</span>
+            </Button>
+            <Button
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105"
+              onClick={() => setShowCryptoPay(true)}
+            >
+              <CreditCard className="w-6 h-6" />
+              <span className="text-xs font-medium">Pay</span>
+            </Button>
+            <Button
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105"
+              onClick={() => setShowStaking(true)}
+            >
+              <BarChart3 className="w-6 h-6" />
+              <span className="text-xs font-medium">Stake</span>
+            </Button>
+            <Button
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105"
+              onClick={() => setShowMoreMenu(!showMoreMenu)}
+            >
+              <MoreHorizontal className="w-6 h-6" />
+              <span className="text-xs font-medium">More</span>
+            </Button>
+          </div>
 
-            {showMoreMenu && (
-              <div className="absolute bottom-full mb-2 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 p-2 min-w-[160px] z-50 animate-fade-in-up">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start p-3 hover:bg-blue-50 rounded-xl"
-                  onClick={() => {
-                    setShowMoreMenu(false)
-                    setShowReceive(true)
-                  }}
-                >
-                  <QrCode className="w-4 h-4 mr-3 text-blue-600" />
-                  <span className="text-gray-700">Receive</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start p-3 hover:bg-green-50 rounded-xl"
-                  onClick={() => {
-                    setShowMoreMenu(false)
-                    setShowSend(true)
-                  }}
-                >
-                  <Send className="w-4 h-4 mr-3 text-green-600" />
-                  <span className="text-gray-700">Send</span>
-                </Button>
-              </div>
-            )}
-          </Button>
+          {/* Expanded More Options - Show below the main grid */}
+          {showMoreMenu && (
+            <div className="mt-4 grid grid-cols-2 gap-4 animate-fade-in-up">
+              <Button
+                className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105"
+                onClick={() => {
+                  setShowMoreMenu(false)
+                  setShowReceive(true)
+                }}
+              >
+                <QrCode className="w-6 h-6" />
+                <span className="text-xs font-medium">Receive</span>
+              </Button>
+              <Button
+                className="bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 rounded-2xl py-5 flex flex-col items-center gap-2 h-auto hover-lift transition-all duration-300 hover:scale-105"
+                onClick={() => {
+                  setShowMoreMenu(false)
+                  setShowSend(true)
+                }}
+              >
+                <Send className="w-6 h-6" />
+                <span className="text-xs font-medium">Send</span>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
